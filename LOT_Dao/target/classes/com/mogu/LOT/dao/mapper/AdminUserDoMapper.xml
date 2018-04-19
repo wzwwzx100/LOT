@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mogu.LOT.dao.mapper.AdminUserDoMapper" >
+  <resultMap id="BaseResultMap" type="com.mogu.LOT.model.entity.AdminUserDo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="role" property="role" jdbcType="INTEGER" />
+    <result column="valid" property="valid" jdbcType="INTEGER" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_name, pwd, role, valid,salt
+  </sql>
+
+  <select id="selectUserByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from tbl_admin_user
+    where user_name = #{userName,jdbcType=VARCHAR} AND valid=1
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from tbl_admin_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAdminList" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from tbl_admin_user
+    where valid=1
+  </select>
+
+  <update id="updatePass" parameterType="com.mogu.LOT.model.params.AdminPassPara">
+    UPDATE tbl_admin_user SET pwd=#{newPwd,jdbcType=VARCHAR}
+    WHERE id=#{id,jdbcType=INTEGER}
+  </update>
+
+
+
+  <insert id="insertSelective" parameterType="com.mogu.LOT.model.entity.AdminUserDo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tbl_admin_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="pwd != null" >
+        pwd,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="role != null" >
+        role,
+      </if>
+      <if test="valid != null" >
+        valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="role != null" >
+        #{role,jdbcType=INTEGER},
+      </if>
+      <if test="valid != null" >
+        #{valid,jdbcType=INTEGER},
+      </if>
+
+    </trim>
+  </insert>
+
+
+  <!--<update id="updateAdminUser" parameterType="AdminUserPara">-->
+    <!--UPDATE tbl_admin_user SET-->
+    <!--<if test="userNmae != null" >-->
+      <!--user_nmae=#{user_nmae,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="pwd != null" >-->
+      <!--pwd=#{pwd,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="role != null" >-->
+      <!--role=#{role,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--WHERE id=#{id,jdbcType=INTEGER}-->
+  <!--</update>-->
+
+
+  <update id="updateAdminUser" parameterType="com.mogu.LOT.model.entity.AdminUserDo">
+    UPDATE tbl_admin_user
+    <set>
+    <if test="userName != null" >
+      user_name=#{userName,jdbcType=VARCHAR},
+    </if>
+    <if test="pwd != null" >
+      pwd=#{pwd,jdbcType=VARCHAR},
+    </if>
+    <if test="role != null" >
+      role=#{role,jdbcType=INTEGER}
+    </if>
+    <if test="valid != null" >
+      valid=#{valid,jdbcType=VARCHAR}
+    </if>
+    </set>
+    WHERE id=#{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

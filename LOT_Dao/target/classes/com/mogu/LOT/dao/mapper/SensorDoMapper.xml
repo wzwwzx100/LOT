@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mogu.LOT.dao.mapper.SensorDoMapper" >
+
+    <resultMap id="BaseResultMap" type="com.mogu.LOT.model.entity.SensorDo" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="channel" property="channel" jdbcType="INTEGER" />
+        <result column="model" property="model" jdbcType="VARCHAR" />
+        <result column="factory" property="factory" jdbcType="VARCHAR" />
+        <result column="frequency" property="frequency" jdbcType="INTEGER" />
+        <result column="text" property="text" jdbcType="VARCHAR" />
+        <result column="terminal" property="terminal" jdbcType="VARCHAR" />
+        <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+        <result column="count" property="count" jdbcType="INTEGER" />
+        <association property="type"  javaType="com.mogu.LOT.model.entity.SensorTypeDo">
+            <id column="sensor_type_id"  property="id"/>
+            <result column="sensor_type_code" property="code"/>
+            <result column="sensor_type_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <insert id="register" parameterType="com.mogu.LOT.model.entity.SensorDo" >
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into tbl_sensor
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="name != null" >
+                `name`,
+            </if>
+            <if test="type != null" >
+                `type`,
+            </if>
+            <if test="channel != null" >
+                channel,
+            </if>
+            <if test="model != null" >
+                model,
+            </if>
+            <if test="factory != null" >
+                factory,
+            </if>
+            <if test="frequency != null" >
+                frequency,
+            </if>
+            <if test="text != null" >
+                text,
+            </if>
+            <if test="terminal != null" >
+                terminal,
+            </if>
+            <if test="lastTime != null" >
+                last_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="name != null" >
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                #{type.id,jdbcType=INTEGER},
+            </if>
+            <if test="channel != null" >
+                #{channel,jdbcType=INTEGER},
+            </if>
+            <if test="model != null" >
+                #{model,jdbcType=VARCHAR},
+            </if>
+            <if test="factory != null" >
+                #{factory,jdbcType=VARCHAR},
+            </if>
+            <if test="frequency != null" >
+                #{frequency,jdbcType=INTEGER},
+            </if>
+            <if test="text != null" >
+                #{text,jdbcType=VARCHAR},
+            </if>
+            <if test="terminal != null" >
+                #{terminal,jdbcType=VARCHAR},
+            </if>
+            <if test="lastTime != null" >
+                #{lastTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+
+    <delete id="delete" parameterType="com.mogu.LOT.model.entity.SensorDo">
+        DELETE  FROM tbl_sensor where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+
+    <select id="findById" resultMap="BaseResultMap">
+        select
+        s.*,t.id as sensor_type_id,t.code as sensor_type_code , t.name as sensor_type_name
+        from tbl_sensor s
+        LEFT JOIN tbl_type t on s.type = t.id
+        where s.id = #{id,jdbcType=BIGINT}
+    </select>
+
+
+
+    <select id="lst" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        s.*,t.id as sensor_type_id,t.code as sensor_type_code , t.name as sensor_type_name
+        from tbl_sensor s
+        LEFT JOIN tbl_type t on s.type = t.id
+        where terminal = #{terminal,jdbcType=VARCHAR}
+    </select>
+
+    <update id="update" parameterType="com.mogu.LOT.model.entity.SensorDo" >
+        update tbl_sensor
+        <set >
+            <if test="name != null" >
+                `name` = #{name},
+            </if>
+            <if test="type != null and type.id != null" >
+                `type` = #{type.id},
+            </if>
+            <if test="channel != null" >
+                channel = #{channel},
+            </if>
+            <if test="model != null" >
+                model = #{model},
+            </if>
+            <if test="factory != null" >
+                factory = #{factory},
+            </if>
+            <if test="frequency != null" >
+                frequency = #{frequency},
+            </if>
+            <if test="text != null" >
+                text = #{text},
+            </if>
+            <if test="lastTime != null" >
+                last_time = #{lastTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <update id="disCount" parameterType="com.mogu.LOT.model.entity.SensorDo" >
+       update tbl_sensor set count = count - 1;
+    </update>
+</mapper>

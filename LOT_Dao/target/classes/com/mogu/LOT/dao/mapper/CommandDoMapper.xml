@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mogu.LOT.dao.mapper.CommandDoMapper" >
+
+    <resultMap id="BaseResultMap" type="com.mogu.LOT.model.entity.CommandDo" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="time" property="time" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="json_msg" property="jsonMsg" jdbcType="VARCHAR" />
+        <association property="messageType" column="message_type" javaType="com.mogu.LOT.model.entity.MessageTypeDo" select="queryType"/>
+        <association property="terminal" column="terminal" javaType="com.mogu.LOT.model.entity.TerminalDo" select="queryTerminal"/>
+    </resultMap>
+
+    <resultMap id="TerminalResultMap" type="com.mogu.LOT.model.entity.TerminalDo" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="port" property="port" jdbcType="INTEGER" />
+        <result column="keyt" property="keyt" jdbcType="VARCHAR" />
+        <association property="product" column="product" javaType="com.mogu.LOT.entity.ProductDo" select="queryProduct"/>
+        <association property="application" column="application" javaType="com.mogu.LOT.entity.ApplicationDo" select="queryApp"/>
+    </resultMap>
+    <select id="queryTerminal" resultMap="TerminalResultMap" >
+        select * from tbl_terminal where id =#{0}
+    </select>
+
+    <resultMap id="productMap" type="com.mogu.LOT.entity.ProductDo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="queryProduct" resultMap="productMap" >
+        select * from tbl_product where id =#{0}
+    </select>
+
+    <resultMap id="AppMap" type="com.mogu.LOT.entity.ApplicationDo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="retry" property="retry" jdbcType="INTEGER" />
+        <result column="company" property="company" jdbcType="VARCHAR" />
+        <result column="contact" property="contact" jdbcType="VARCHAR" />
+        <result column="tel" property="tel" jdbcType="VARCHAR" />
+        <result column="valid" property="valid" jdbcType="INTEGER" />
+    </resultMap>
+    <select id="queryApp" resultMap="AppMap" >
+        select * from tbl_application where id =#{0}
+    </select>
+
+
+    <resultMap id="MessageTypeMap" type="com.mogu.LOT.model.entity.MessageTypeDo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="direction" property="direction" jdbcType="INTEGER" />
+        <result column="clazz" property="clazz" jdbcType="INTEGER" />
+        <result column="valid" property="valid" jdbcType="INTEGER" />
+    </resultMap>
+    <select id="queryType" resultMap="MessageTypeMap" >
+        select * from tbl_type where id =#{0}
+    </select>
+
+
+    <insert id="add" parameterType="com.mogu.LOT.model.entity.CommandDo" >
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into tbl_command
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="time != null" >
+                `time`,
+            </if>
+            <if test="status != null" >
+                `status`,
+            </if>
+            <if test="jsonMsg != null" >
+                `json_msg`,
+            </if>
+            <if test="messageType != null" >
+                `message_type`,
+            </if>
+            <if test="terminal != null" >
+                `terminal`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="time != null" >
+                #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="jsonMsg != null" >
+                #{jsonMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="messageType != null" >
+                #{messageType.id,jdbcType=INTEGER},
+            </if>
+            <if test="terminal != null" >
+                #{terminal.id,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="success" parameterType="java.lang.Long">
+        update tbl_command set status = 1 WHERE id = #{0}
+    </update>
+
+    <delete id="del" parameterType="com.mogu.LOT.model.entity.CommandDo">
+        DELETE  FROM tbl_command where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <select id="lst" resultMap="BaseResultMap" >
+        select * from tbl_command c WHERE 1=1
+        <if test="terminal != null and terminal.product != null and terminal.product.id != null">
+            AND c.terminal in (SELECT id from tbl_terminal t1 WHERE t1.product = #{terminal.product.id})
+        </if>
+        <if test="terminal != null and terminal.application != null and terminal.application.id != null">
+            AND c.terminal in (SELECT id from tbl_terminal t2 WHERE t2.application = #{terminal.application.id})
+        </if>
+        <if test="messageType != null and messageType.id != null">
+            AND c.message_type = #{messageType.id}
+        </if>
+        <if test="terminal != null and terminal.id != null">
+            AND c.terminal = #{terminal.id}
+        </if>
+    </select>
+
+    <select id="findFailed" resultMap="BaseResultMap" >
+        select * from tbl_command WHERE status = 0
+            AND terminal = #{id}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mogu.LOT.dao.mapper.SystemConfigMapper" >
+
+    <resultMap id="BaseResultMap" type="com.mogu.LOT.model.common.SystemConfig" >
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="value" property="value" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        code, `value`
+   </sql>
+
+
+
+
+    <insert id="add" parameterType="com.mogu.LOT.model.common.SystemConfig" >
+        insert into tbl_config
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="code != null" >
+                code,
+            </if>
+            <if test="value != null" >
+                `value`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="code != null" >
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="value != null" >
+                #{value.id,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="modify" parameterType="com.mogu.LOT.model.common.SystemConfig" >
+        update tbl_config
+        <set >
+            <if test="value != null" >
+                `value` = #{value},
+            </if>
+        </set>
+        where code = #{code,jdbcType=VARCHAR}
+    </update>
+
+
+    <select id="findByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        *
+        from tbl_config
+        where code = #{code,jdbcType=VARCHAR}
+    </select>
+
+
+</mapper>

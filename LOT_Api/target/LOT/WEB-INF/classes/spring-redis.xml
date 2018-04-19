@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <bean name="genericObjectPoolConfig" class="org.apache.commons.pool2.impl.GenericObjectPoolConfig">
+        <property name="maxWaitMillis" value="-1" />
+        <property name="maxTotal" value="1000" />
+        <property name="minIdle" value="1" />
+        <property name="maxIdle" value="100" />
+    </bean>
+
+    <bean id="jedisCluster" class="com.mogu.LOT.conf.JedisClusterFactory">
+        <property name="connectionTimeout" value="3000" />
+        <property name="soTimeout" value="3000" />
+        <property name="maxRedirections" value="5" />
+        <property name="maxAttempts" value="5" />
+        <property name="password" value="${redis_pwd}" />
+        <property name="genericObjectPoolConfig" ref="genericObjectPoolConfig" />
+        <property name="jedisClusterNodes">
+            <set>
+                <value>${redis_url_node_1}</value>
+                <value>${redis_url_node_2}</value>
+                <value>${redis_url_node_3}</value>
+            </set>
+        </property>
+    </bean>
+
+</beans>

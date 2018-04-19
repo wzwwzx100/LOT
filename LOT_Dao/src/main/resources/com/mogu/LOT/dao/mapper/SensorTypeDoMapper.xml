@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mogu.LOT.dao.mapper.SensorTypeDoMapper" >
+
+    <resultMap id="BaseResultMap" type="com.mogu.LOT.model.entity.SensorTypeDo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="clazz" property="clazz" jdbcType="INTEGER" />
+    </resultMap>
+
+
+    <insert id="register" parameterType="com.mogu.LOT.model.entity.SensorTypeDo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tbl_type
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="code != null" >
+                code,
+            </if>
+            <if test="name != null" >
+               `name`,
+            </if>
+            <if test="clazz != null" >
+                clazz
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+        <if test="code != null" >
+            #{code,jdbcType=VARCHAR},
+        </if>
+        <if test="name != null" >
+            #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="clazz != null" >
+            #{clazz,jdbcType=INTEGER},
+        </if>
+        </trim>
+    </insert>
+
+    <update id="modify" parameterType="com.mogu.LOT.model.entity.SensorTypeDo">
+        UPDATE tbl_type
+        <set>
+            <if test="code != null" >
+                code=#{code,jdbcType=VARCHAR},
+            </if>
+        <if test="name != null" >
+            `name`=#{name,jdbcType=VARCHAR},
+        </if>
+    </set>
+      WHERE id=#{id,jdbcType=INTEGER}
+    </update>
+
+
+    <delete id="delete" parameterType="com.mogu.LOT.model.entity.SensorTypeDo">
+        DELETE  FROM tbl_type where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+
+    <select id="lst" resultMap="BaseResultMap">
+       SELECT id,code,`name`,clazz FROM tbl_type WHERE clazz = 1
+        <if test="code != null">
+            AND (code like #{code} or `name` like #{code})
+        </if>
+    </select>
+
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM tbl_type WHERE clazz = 1 AND id = #{id}
+    </select>
+
+    <select id="findByCode" resultMap="BaseResultMap">
+        SELECT * FROM tbl_type WHERE clazz = 1 and code = #{0}
+    </select>
+</mapper>

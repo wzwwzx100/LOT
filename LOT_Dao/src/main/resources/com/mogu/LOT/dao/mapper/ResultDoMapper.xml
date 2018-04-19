@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mogu.LOT.dao.mapper.ResultDoMapper" >
+
+    <resultMap id="BaseResultMap" type="com.mogu.LOT.model.entity.ResultDo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="valid" property="valid" jdbcType="INTEGER" />
+        <result column="time" property="time" jdbcType="TIMESTAMP" />
+        <result column="value" property="value" jdbcType="DOUBLE" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <association property="terminal" column="terminal" javaType="com.mogu.LOT.model.entity.TerminalDo" select="queryTerminal"/>
+        <association property="sensor" column="sensor" javaType="com.mogu.LOT.model.entity.SensorDo" select="querySensor"/>
+        <association property="data" column="data" javaType="com.mogu.LOT.entity.DataDo" select="queryData"/>
+    </resultMap>
+
+    <resultMap id="TerminalResultMap" type="com.mogu.LOT.model.entity.TerminalDo" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="port" property="port" jdbcType="INTEGER" />
+        <result column="keyt" property="keyt" jdbcType="VARCHAR" />
+        <association property="product" column="product" javaType="com.mogu.LOT.entity.ProductDo" select="queryProduct"/>
+        <association property="application" column="application" javaType="com.mogu.LOT.entity.ApplicationDo" select="queryApp"/>
+    </resultMap>
+
+    <resultMap id="SensorResultMap" type="com.mogu.LOT.model.entity.SensorDo" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="channel" property="channel" jdbcType="INTEGER" />
+        <result column="model" property="model" jdbcType="VARCHAR" />
+        <result column="factory" property="factory" jdbcType="VARCHAR" />
+        <result column="frequency" property="frequency" jdbcType="INTEGER" />
+        <result column="text" property="text" jdbcType="VARCHAR" />
+        <result column="terminal" property="terminal" jdbcType="VARCHAR" />
+        <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+        <association property="type"  javaType="com.mogu.LOT.model.entity.SensorTypeDo">
+            <id column="sensor_type_id"  property="id"/>
+            <result column="sensor_type_code" property="code"/>
+            <result column="sensor_type_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="DataResultMap" type="com.mogu.LOT.entity.DataDo" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="sensor" property="sensor" jdbcType="BIGINT" />
+        <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+        <association property="deviceType"  javaType="com.mogu.LOT.entity.DeviceTypeDo">
+            <id column="device_type_id"  property="id"/>
+            <result column="device_type_code" property="code"/>
+            <result column="device_type_name" property="name"/>
+            <result column="device_type_graph" property="graph"/>
+        </association>
+        <association property="dataType"  javaType="com.mogu.LOT.entity.DataTypeDo">
+            <id column="data_type_id"  property="id"/>
+            <result column="data_type_code" property="code"/>
+            <result column="data_type_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="queryTerminal" resultMap="TerminalResultMap" >
+        select * from tbl_terminal where id =#{0}
+    </select>
+
+    <select id="querySensor" resultMap="SensorResultMap" >
+        select
+        s.*,t.id as sensor_type_id,t.code as sensor_type_code , t.name as sensor_type_name
+        from tbl_sensor s
+        LEFT JOIN tbl_type t on s.type = t.id
+        WHERE s.id =#{0}
+    </select>
+
+    <select id="queryData" resultMap="DataResultMap" >
+        select
+        d.id, d.sensor, d.last_time,device.id as device_type_id,device.code as device_type_code,device.graph as device_type_graph, device.name as device_type_name ,`data`.id as data_type_id ,`data`.code as data_type_code,`data`.name as data_type_name
+        from tbl_data d
+        LEFT JOIN tbl_type device on d.device_type = device.id
+        LEFT JOIN tbl_type `data` on d.data_type = `data`.id
+        where d.id = #{0}
+    </select>
+
+    <resultMap id="productMap" type="com.mogu.LOT.entity.ProductDo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="queryProduct" resultMap="productMap" >
+        select * from tbl_product where id =#{0}
+    </select>
+
+    <resultMap id="AppMap" type="com.mogu.LOT.entity.ApplicationDo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="retry" property="retry" jdbcType="INTEGER" />
+        <result column="company" property="company" jdbcType="VARCHAR" />
+        <result column="contact" property="contact" jdbcType="VARCHAR" />
+        <result column="tel" property="tel" jdbcType="VARCHAR" />
+        <result column="valid" property="valid" jdbcType="INTEGER" />
+    </resultMap>
+    <select id="queryApp" resultMap="AppMap" >
+        select * from tbl_application where id =#{0}
+    </select>
+
+
+    <insert id="save" parameterType="com.mogu.LOT.model.entity.ResultDo" >
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into tbl_result
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="time != null" >
+                `time`,
+            </if>
+            <if test="value != null" >
+                `value`,
+            </if>
+            <if test="status != null" >
+                status,
+            </if>
+            <if test="terminal != null" >
+                terminal,
+            </if>
+            <if test="sensor != null" >
+                sensor,
+            </if>
+            <if test="data != null" >
+                `data`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="time != null" >
+                #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="value != null" >
+                #{value,jdbcType=DOUBLE},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="terminal != null" >
+                #{terminal.id,jdbcType=VARCHAR},
+            </if>
+            <if test="sensor != null" >
+                #{sensor.id,jdbcType=VARCHAR},
+            </if>
+            <if test="data != null" >
+                #{data.id,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+
+
+    <select id="lst" resultMap="BaseResultMap" >
+        select * from tbl_result WHERE `time`  &lt;= #{ed,jdbcType=TIMESTAMP} and `time`  &gt;=  #{bg,jdbcType=TIMESTAMP}
+        <if test="sensor != null and sensor.type != null and sensor.type.id != null">
+             AND sensor in (SELECT id from tbl_sensor WHERE TYPE = #{sensor.type.id})
+        </if>
+        <if test="terminal != null and terminal.id != null">
+            AND terminal =  #{terminal.id}
+        </if>
+        <if test="data != null and data.id != null">
+            AND `data` = #{data.id}
+        </if>
+    </select>
+
+
+    <select id="realValue" resultMap="BaseResultMap" parameterType="com.mogu.LOT.model.entity.TerminalDo">
+        select
+        CASE
+            WHEN (TIME_TO_SEC(TIMEDIFF(now(),last_time)) > (select `value` from tbl_config where code = "heart") or last_time is null) THEN 0
+            else 1
+        END valid ,
+        a.* from (SELECT * from tbl_result where terminal = #{id} ORDER BY time  desc ) a  JOIN tbl_data d on d.id = a.`data` group by a.`data`
+    </select>
+</mapper>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mogu.LOT.dao.mapper.MessageDoMapper" >
+    <resultMap id="BaseResultMap" type="com.mogu.LOT.model.entity.MsgInfoDo" >
+        <id column="id" property="id"  jdbcType="BIGINT" />
+        <result column="at_time" property="atTime" jdbcType="TIMESTAMP" />
+        <result column="life" property="life" jdbcType="INTEGER" />
+        <result column="sq" property="sq" jdbcType="BIGINT" />
+        <result column="terminal_id" property="terminalId" jdbcType="VARCHAR" />
+        <result column="msg_code" property="msgCode" jdbcType="VARCHAR" />
+        <result column="msg_codename" property="msgCodeName" jdbcType="VARCHAR" />
+        <result column="msg_type" property="msgType" jdbcType="INTEGER" />
+        <result column="msg" property="msg" jdbcType="VARCHAR" />
+        <result column="private_msg" property="privateMsg" jdbcType="VARCHAR" />
+        <result column="json_text" property="jsonText" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, at_time,life,sq,terminal_id,msg_code,msg_codename,msg_type,msg,private_msg,json_text
+    </sql>
+
+    <insert id="addMessage" parameterType="com.mogu.LOT.model.entity.MsgInfoDo" >
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+          insert into tbl_msg
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="atTime != null" >
+                at_time,
+            </if>
+            <if test="life != null" >
+                life,
+            </if>
+            <if test="sq != null" >
+                sq,
+            </if>
+            <if test="terminalId != null" >
+                terminal_id,
+            </if>
+            <if test="msgCode != null" >
+                msg_code,
+            </if>
+            <if test="msgCodeName != null" >
+                msg_codename,
+            </if>
+            <if test="msgType != null" >
+                msg_type,
+            </if>
+            <if test="msg != null" >
+                msg,
+            </if>
+            <if test="privateMsg != null" >
+                private_msg,
+            </if>
+            <if test="jsonText != null" >
+                json_text,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="atTime != null" >
+                #{atTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="life != null" >
+                #{life,jdbcType=INTEGER},
+            </if>
+            <if test="sq != null" >
+                #{sq,jdbcType=BIGINT},
+            </if>
+            <if test="terminalId != null" >
+                #{terminalId,jdbcType=VARCHAR},
+            </if>
+            <if test="msgCode != null" >
+                #{msgCode,jdbcType=VARCHAR},
+            </if>
+            <if test="msgCodeName != null" >
+                #{msgCodeName,jdbcType=VARCHAR},
+            </if>
+            <if test="msgType != null" >
+                #{msgType,jdbcType=VARCHAR},
+            </if>
+            <if test="msg != null" >
+                #{msg,jdbcType=VARCHAR},
+            </if>
+            <if test="privateMsg != null" >
+                #{privateMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="jsonText != null" >
+                #{jsonText,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    
+    
+    <select id="lst" resultMap="BaseResultMap" parameterType="com.mogu.LOT.model.params.MessageParam">
+        select * from tbl_msg WHERE  `at_time`  &lt;= #{ed,jdbcType=TIMESTAMP} and `at_time`  &gt;=  #{bg,jdbcType=TIMESTAMP}
+        <if test="terminalId != null">
+           AND terminal_id = #{terminalId}
+        </if>
+        <if test="msgCode != null">
+            AND msg_code = #{msgCode}
+        </if>
+        <if test="text != null">
+            AND msg like #{text}
+        </if>
+    </select>
+</mapper>

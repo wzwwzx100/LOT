@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="GEMAKER_Api" />
+        <module name="GEMAKER_Dao" />
+        <module name="GEMAKER_Model" />
+        <module name="GEMAKER_Service" />
+        <module name="LOT_Api" />
+        <module name="LOT_Dao" />
+        <module name="LOT_Model" />
+        <module name="LOT_Service" />
+        <module name="VOTE_Api" />
+        <module name="VOTE_Dao" />
+        <module name="VOTE_Model" />
+        <module name="VOTE_Service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="GEMAKER" target="1.7" />
+      <module name="GEMAKER_Api" target="1.7" />
+      <module name="GEMAKER_Dao" target="1.7" />
+      <module name="GEMAKER_Model" target="1.7" />
+      <module name="GEMAKER_Service" target="1.7" />
+      <module name="LOT" target="1.7" />
+      <module name="LOT_Api" target="1.7" />
+      <module name="LOT_Dao" target="1.7" />
+      <module name="LOT_Model" target="1.7" />
+      <module name="LOT_Service" target="1.7" />
+      <module name="VOTE" target="1.7" />
+      <module name="VOTE_Api" target="1.7" />
+      <module name="VOTE_Dao" target="1.7" />
+      <module name="VOTE_Model" target="1.7" />
+      <module name="VOTE_Service" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

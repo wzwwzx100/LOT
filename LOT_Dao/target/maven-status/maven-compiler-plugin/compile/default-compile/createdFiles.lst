@@ -1,0 +1,11 @@
+com\mogu\LOT\dao\mapper\MessageDoMapper.class
+com\mogu\LOT\dao\mapper\SystemConfigMapper.class
+com\mogu\LOT\dao\mapper\MessageTypeDoMapper.class
+com\mogu\LOT\dao\mapper\BaseTypeDoMapper.class
+com\mogu\LOT\dao\mapper\ResultDoMapper.class
+com\mogu\LOT\dao\mapper\AdminUserDoMapper.class
+com\mogu\LOT\dao\mapper\UserDoMapper.class
+com\mogu\LOT\dao\mapper\TerminalDoMapper.class
+com\mogu\LOT\dao\mapper\SensorDoMapper.class
+com\mogu\LOT\dao\mapper\CommandDoMapper.class
+com\mogu\LOT\dao\mapper\SensorTypeDoMapper.class

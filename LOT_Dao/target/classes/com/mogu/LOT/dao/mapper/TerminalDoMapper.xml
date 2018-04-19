@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mogu.LOT.dao.mapper.TerminalDoMapper" >
+
+    <resultMap id="BaseResultMap" type="com.mogu.LOT.model.entity.TerminalDo" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="port" property="port" jdbcType="INTEGER" />
+        <result column="keyt" property="keyt" jdbcType="VARCHAR" />
+        <result column="belong" property="belong" jdbcType="VARCHAR" />
+        <association property="product" column="product" javaType="com.mogu.LOT.entity.ProductDo" select="queryProduct"/>
+        <association property="application" column="application" javaType="com.mogu.LOT.entity.ApplicationDo" select="queryApp"/>
+    </resultMap>
+
+
+    <resultMap id="productMap" type="com.mogu.LOT.entity.ProductDo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="queryProduct" resultMap="productMap" >
+        select * from tbl_product where id =#{0}
+    </select>
+
+    <resultMap id="AppMap" type="com.mogu.LOT.entity.ApplicationDo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="retry" property="retry" jdbcType="INTEGER" />
+        <result column="company" property="company" jdbcType="VARCHAR" />
+        <result column="contact" property="contact" jdbcType="VARCHAR" />
+        <result column="tel" property="tel" jdbcType="VARCHAR" />
+        <result column="valid" property="valid" jdbcType="INTEGER" />
+    </resultMap>
+    <select id="queryApp" resultMap="AppMap" >
+        select * from tbl_application where id =#{0}
+    </select>
+
+
+    <insert id="register" parameterType="com.mogu.LOT.model.entity.TerminalDo" >
+        insert into tbl_terminal
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="product != null" >
+                product,
+            </if>
+            <if test="application != null" >
+                application,
+            </if>
+            <if test="keyt != null" >
+                keyt,
+            </if>
+            <if test="belong != null" >
+                belong,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="product != null" >
+                #{product.id,jdbcType=INTEGER},
+            </if>
+            <if test="application != null" >
+                #{application.id,jdbcType=INTEGER},
+            </if>
+            <if test="keyt != null" >
+                #{keyt,jdbcType=VARCHAR},
+            </if>
+            <if test="belong != null" >
+                #{belong,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="modify" parameterType="com.mogu.LOT.model.entity.TerminalDo" >
+        update tbl_terminal
+        <set >
+            <if test="product != null" >
+                product = #{product.id},
+            </if>
+            <if test="belong != null" >
+                belong = #{belong},
+            </if>
+            <if test="application != null" >
+                application = #{application.id},
+            </if>
+            <if test="lastTime != null" >
+                last_time = #{lastTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ip != null" >
+                ip = #{ip},
+            </if>
+            <if test="port != null" >
+                port = #{port,jdbcType=INTEGER},
+            </if>
+            <if test="keyt != null" >
+                keyt = #{keyt}
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="delete" parameterType="com.mogu.LOT.model.entity.TerminalDo">
+        delete from tbl_terminal WHERE  id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        *
+        from tbl_terminal
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="lst" resultMap="BaseResultMap" >
+        select * from tbl_terminal WHERE 1=1
+        <if test="product != null and product.id != null">
+            AND product = #{product.id}
+        </if>
+        <if test="id != null">
+            AND id =  #{id}
+        </if>
+        <if test="application != null and application.id != null">
+            AND `application` = #{application.id}
+        </if>
+    </select>
+
+    <select id="offLine" resultMap="BaseResultMap" parameterType="com.mogu.LOT.model.params.TerminalParam">
+        select * from tbl_terminal WHERE (TIME_TO_SEC(TIMEDIFF(now(),last_time)) &gt;= #{time,jdbcType=BIGINT} or last_time is null)
+        <if test="product != null and product.id != null">
+            AND product = #{product.id}
+        </if>
+        <if test="id != null">
+            AND id =  #{id}
+        </if>
+        <if test="application != null and application.id != null">
+            AND `application` = #{application.id}
+        </if>
+    </select>
+</mapper>

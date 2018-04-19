@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mogu.LOT.dao.mapper.MessageTypeDoMapper" >
+
+    <resultMap id="BaseResultMap" type="com.mogu.LOT.model.entity.MessageTypeDo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="direction" property="direction" jdbcType="INTEGER" />
+        <result column="clazz" property="clazz" jdbcType="INTEGER" />
+        <result column="valid" property="valid" jdbcType="INTEGER" />
+    </resultMap>
+
+
+    <insert id="register" parameterType="com.mogu.LOT.model.entity.MessageTypeDo" >
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into tbl_type
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="code != null" >
+                `code`,
+            </if>
+            <if test="name != null" >
+                `name`,
+            </if>
+            <if test="direction != null" >
+                direction,
+            </if>
+            <if test="clazz != null" >
+                clazz,
+            </if>
+            <if test="valid != null" >
+                valid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="code != null" >
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="direction != null" >
+                #{direction,jdbcType=INTEGER},
+            </if>
+            <if test="clazz != null" >
+                #{clazz,jdbcType=INTEGER},
+            </if>
+            <if test="valid != null" >
+                #{valid,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="modify" parameterType="com.mogu.LOT.model.entity.MessageTypeDo">
+        UPDATE tbl_type
+        <set>
+            <if test="code != null" >
+                code=#{code,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                `name`=#{name,jdbcType=VARCHAR},
+            </if>
+            <if test="direction != null" >
+                direction=#{direction,jdbcType=INTEGER},
+            </if>
+            <if test="valid != null" >
+                valid=#{valid,jdbcType=INTEGER},
+            </if>
+        </set>
+        WHERE id=#{id,jdbcType=INTEGER}
+    </update>
+
+
+    <delete id="delete" parameterType="com.mogu.LOT.model.entity.MessageTypeDo">
+        DELETE  FROM tbl_type where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+
+    <select id="lst" resultMap="BaseResultMap" parameterType="com.mogu.LOT.model.entity.MessageTypeDo">
+        SELECT id,code,`name`,direction,valid FROM tbl_type WHERE clazz = 4
+        <if test="direction != null">
+          and direction = #{direction}
+        </if>
+        <if test="code != null">
+            and code = #{code}
+        </if>
+    </select>
+
+    <select id="findByCode" resultMap="BaseResultMap">
+    SELECT id,code,`name`,direction,valid FROM tbl_type WHERE clazz = 4 and code = #{0}
+</select>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM tbl_type WHERE clazz = 4 AND id = #{id}
+    </select>
+
+</mapper>
